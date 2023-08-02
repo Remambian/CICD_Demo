@@ -5,7 +5,8 @@ version: 2.1
 
 jobs:
   build:
-    docker: circleci/node:13.8.0
+    docker: 
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run: npm i
@@ -16,7 +17,8 @@ jobs:
       - run: npm run lint
 
   test:
-    docker: circleci/node:13.8.0
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout      
       - restore_cache:
@@ -27,7 +29,8 @@ jobs:
 
 
   analyze:
-    docker: circleci/node:13.8.0
+    docker: 
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
