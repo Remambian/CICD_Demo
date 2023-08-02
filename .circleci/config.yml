@@ -4,16 +4,45 @@ version: 2.1
 
 
 jobs:
-  build_job:
-    docker:
-      - image: cimg/base:stable
-    steps:     
-      - run: exit 0
-      - run: 
-          command: echo "This is a error command"
-          when: on_fail
+  build:
+    docker: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm i
+      - save_cache:
+          key: "npm_packages"
+          paths:
+            /src/node_module
+      - run: npm run lint
+
+  test:
+    docker: circleci/node:13.8.0
+    steps:
+      - checkout      
+      - restore_cache:
+        keys: 
+          - "npm_packages"
+      - run: npm -i
+      - run: npm run test
+
+
+  analyze:
+    docker: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+        keys: 
+          - "npm_packages"
+      - run: npm audit
+
 
 workflows:
   validate_workflow:
     jobs:
-      - build_job
+      - build
+      - test:
+        requires:
+          - build
+      - analyze:
+        requires:
+          - test
